@@ -15,7 +15,7 @@ PFont f;
 int courtWidth = 700;
 int courtHeight = 420;
 int xoffset = 40;
-int yoffset = 40;
+int yoffset = 100;
 
 /* Click Events */
 boolean overNextButton = false;
@@ -24,9 +24,9 @@ boolean gamePaused = false;
 boolean overPauseButton = false;
 
 void setup() {
-  size(1200,700);
+  size(1250,750);
   
-  hs1 = new HScrollbar(0, 492, width, 16, 16);  
+  hs1 = new HScrollbar(xoffset, yoffset + courtHeight, courtWidth, 20, 1);  
     
   loadData(fileNum);
 }
@@ -66,11 +66,12 @@ void draw() {
   background(255, 255, 255);
   
   drawCourt();
+  drawTopBar();
   drawScoreboard();
   drawButtons();
   
-  //hs1.update();
-  //hs1.display();
+  hs1.update();
+  hs1.display();
      
   if (count < table.getRowCount()){
      populateCourt();
@@ -83,6 +84,12 @@ void draw() {
   }  
   
   drawPlayerInfo();
+}
+
+void drawTopBar(){
+   stroke(0, 0, 0);
+   fill(255, 255, 255);
+   rect(xoffset, yoffset - 40, courtWidth, 40); 
 }
 
 void drawButtons(){
@@ -184,7 +191,7 @@ void drawCourt(){
   //court
   fill(232, 211, 136);
   stroke(19,85,213);
-  rect(40, 40, 700, 420);
+  rect(xoffset, yoffset, courtWidth, courtHeight);
 
   //left half of court
   stroke(19,85,213);
@@ -233,13 +240,11 @@ void populateCourt(){
      if (row.getInt("teamid") == 1610612737) {
          stroke(0, 0, 0);
          fill(108,112,238);
-         storeInMap(row);
          isPlayer = true;
      }
      else if (row.getInt("teamid") == 1610612751) {
          stroke(0, 0, 0);
          fill(204,0,0);
-         storeInMap(row);
          isPlayer = true;
      }
      else {
@@ -247,10 +252,11 @@ void populateCourt(){
          stroke(1, 0);
      }
      
-     if (isPlayer){
+     if (isPlayer){        
+       storeInMap(row);
        String name = playerNames.get(Integer.toString((row.getInt("playerid"))));
        String num = name.substring(name.indexOf("#"), name.length()-1);
-       text(num, row.getInt("xpos")*7 + 25, row.getInt("ypos")*7 + 20, 70);
+       text(num, row.getInt("xpos")*7 + 30, row.getInt("ypos")*7 + yoffset - 20, 70);
      }
      
      ellipse(row.getInt("xpos")*7 + xoffset, row.getInt("ypos")*7 + yoffset, 20, 20);
