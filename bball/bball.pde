@@ -39,6 +39,8 @@ void loadData(int fileNum){
   playerTable.setColumnTitle(0, "playerid");
   playerTable.setColumnTitle(1, "firstname");
   playerTable.setColumnTitle(2, "lastname");
+  playerTable.setColumnTitle(3, "jerseynumber");
+
   
   String fileName = "../data/games/0041400102/" + fileNum + ".csv";
   table = loadTable(fileName);
@@ -221,6 +223,7 @@ void drawScoreboard(){
 
 void populateCourt(){
   TableRow row;
+  boolean isPlayer = false;
   if (table.getRow(count).getInt("teamid") != -1){
      println(count);
      noLoop();
@@ -231,15 +234,23 @@ void populateCourt(){
          stroke(0, 0, 0);
          fill(108,112,238);
          storeInMap(row);
+         isPlayer = true;
      }
      else if (row.getInt("teamid") == 1610612751) {
          stroke(0, 0, 0);
          fill(204,0,0);
          storeInMap(row);
+         isPlayer = true;
      }
      else {
          fill(254,154,61);
          stroke(1, 0);
+     }
+     
+     if (isPlayer){
+       String name = playerNames.get(Integer.toString((row.getInt("playerid"))));
+       String num = name.substring(name.indexOf("#"), name.length()-1);
+       text(num, row.getInt("xpos")*7 + 25, row.getInt("ypos")*7 + 20, 70);
      }
      
      ellipse(row.getInt("xpos")*7 + xoffset, row.getInt("ypos")*7 + yoffset, 20, 20);
@@ -259,7 +270,7 @@ void storeInMap(TableRow row){
       double ydiff = temp[1] - row.getInt("ypos");
       double xdiff = temp[0] - row.getInt("xpos");
       double dist = Math.sqrt(ydiff*ydiff + xdiff*xdiff);
-      temp[2] += dist;
+      temp[2] += Math.round(7*94*dist/courtWidth);
       
       //update current position
       temp[0] = row.getInt("xpos");
@@ -272,7 +283,7 @@ void storeInMap(TableRow row){
       
       for (TableRow rowElem : playerTable.rows()) {
         if (row.getInt("playerid") == rowElem.getInt("playerid")){
-           String name = rowElem.getString("firstname") + " " + rowElem.getString("lastname");
+           String name = rowElem.getString("firstname") + " " + rowElem.getString("lastname") + " (#" + rowElem.getString("jerseynumber") + ")";
            playerNames.put(playerid, name);
         }
       }
@@ -293,7 +304,7 @@ void drawPlayerInfo(){
       double[] temp = playerData.get(playerid);
       double dist = temp[2];
       
-      String s = entry.getValue() + ": " + dist;
+      String s = entry.getValue() + ": " + dist + " ft";
       
       fill(255, 0, 0);
       text(s, 900, yoffset*3 + ypos, 70);
