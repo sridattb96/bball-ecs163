@@ -1,11 +1,21 @@
 import java.util.Map;
 import java.lang.Math;
 
+/* Data Storage */
 HashMap<String, double[]> playerData = new HashMap<String, double[]>();
 HashMap<String, String> playerNames = new HashMap<String, String>();
 
 Table table;
 Table playerTable;
+Table teamTable;
+
+/* Useful Variables */
+int team1;
+int team2;
+
+String team1Name;
+String team2Name;
+
 int count = 0;
 int fileNum = 1;
 HScrollbar hs1;
@@ -26,9 +36,22 @@ boolean overPauseButton = false;
 void setup() {
   size(1250,750);
   
-  hs1 = new HScrollbar(xoffset, yoffset + courtHeight, courtWidth, 20, 1);  
+  hs1 = new HScrollbar(xoffset, yoffset + courtHeight + 12, courtWidth, 20, 1);  
     
   loadData(fileNum);
+  
+  team1 = table.getRow(1).getInt("teamid");
+  team2 = table.getRow(6).getInt("teamid");
+  
+  for (int i = 0; i < teamTable.getRowCount(); i++){
+     TableRow row = teamTable.getRow(i);
+     if (row.getInt("teamid") == team1){
+       team1Name = row.getString("name") + " (" + row.getString("abbr") + ")";
+     }
+     if (row.getInt("teamid") == team2){
+       team2Name = row.getString("name") + " (" + row.getString("abbr") + ")";
+     }
+  }
 }
 
 void loadData(int fileNum){
@@ -40,9 +63,15 @@ void loadData(int fileNum){
   playerTable.setColumnTitle(1, "firstname");
   playerTable.setColumnTitle(2, "lastname");
   playerTable.setColumnTitle(3, "jerseynumber");
-
   
-  String fileName = "../data/games/0041400102/" + fileNum + ".csv";
+  String teamFile = "../team.csv";
+  teamTable = loadTable(teamFile);
+  
+  teamTable.setColumnTitle(0, "teamid");
+  teamTable.setColumnTitle(1, "name");
+  teamTable.setColumnTitle(2, "abbr");
+  
+  String fileName = "../data/games/0041400212/" + fileNum + ".csv";
   table = loadTable(fileName);
   
   if (table != null){  
@@ -50,6 +79,8 @@ void loadData(int fileNum){
       table.setColumnTitle(2, "playerid");
       table.setColumnTitle(3, "xpos");
       table.setColumnTitle(4, "ypos");
+      table.setColumnTitle(7, "gameclock");
+      table.setColumnTitle(8, "shotclock");
   }
   
   else {
@@ -66,8 +97,7 @@ void draw() {
   background(255, 255, 255);
   
   drawCourt();
-  drawTopBar();
-  drawScoreboard();
+  //drawScoreboard();
   drawButtons();
   
   hs1.update();
@@ -84,12 +114,6 @@ void draw() {
   }  
   
   drawPlayerInfo();
-}
-
-void drawTopBar(){
-   stroke(0, 0, 0);
-   fill(255, 255, 255);
-   rect(xoffset, yoffset - 40, courtWidth, 40); 
 }
 
 void drawButtons(){
@@ -231,18 +255,20 @@ void drawScoreboard(){
 void populateCourt(){
   TableRow row;
   boolean isPlayer = false;
-  if (table.getRow(count).getInt("teamid") != -1){
-     println(count);
-     noLoop();
-  }
+  //if (table.getRow(count).getInt("teamid") != -1){
+  //   println(count);
+  //}
+
   for (int i = 0; i < 11; i++){
      row = table.getRow(count + i);
-     if (row.getInt("teamid") == 1610612737) {
+     println(row.getInt("teamid"));
+     noLoop();
+     if (row.getInt("teamid") == team1) {
          stroke(0, 0, 0);
          fill(108,112,238);
          isPlayer = true;
      }
-     else if (row.getInt("teamid") == 1610612751) {
+     else if (row.getInt("teamid") == team2) {
          stroke(0, 0, 0);
          fill(204,0,0);
          isPlayer = true;
@@ -254,15 +280,43 @@ void populateCourt(){
      
      if (isPlayer){        
        storeInMap(row);
+       textSize(12);
        String name = playerNames.get(Integer.toString((row.getInt("playerid"))));
        String num = name.substring(name.indexOf("#"), name.length()-1);
        text(num, row.getInt("xpos")*7 + 30, row.getInt("ypos")*7 + yoffset - 20, 70);
      }
      
      ellipse(row.getInt("xpos")*7 + xoffset, row.getInt("ypos")*7 + yoffset, 20, 20);
+     
+     drawTopBar(row);
   }
   
   count += 11;
+}
+
+void drawTopBar(TableRow row){
+  
+   stroke(0, 0, 0);
+   noFill();
+   rect(xoffset, yoffset - 40, courtWidth, 40); 
+   
+   //game title
+   textSize(17);   
+   fill(0, 0, 0);
+   String title = team1Name + " vs " + team2Name;
+   text(title, xoffset + 150, yoffset - 10, 10);
+
+   //shotclock
+   textSize(25);
+   fill(0, 0, 0);
+   int sc = row.getInt("shotclock");
+   text(Integer.toString(sc), xoffset + courtWidth - 35, yoffset - 10, 40);
+   
+   //gametime
+   textSize(25);
+   fill(0, 0, 0);
+   int gt = row.getInt("gameclock");
+   text(Integer.toString(gt), xoffset + 10, yoffset - 10, 40);
 }
 
 void storeInMap(TableRow row){
@@ -298,25 +352,63 @@ void storeInMap(TableRow row){
 
 void drawPlayerInfo(){
   
-  String title = "Distances traveled by each player";
-  fill(255, 0, 0);
-  text(title, 900, yoffset*2, 70);
+  String title = "Distance Statistics";
   
-
+  fill(255, 255, 255);
+  rect(900, yoffset, 250, 70);
+  
+  textSize(20);
+  fill(255, 0, 0);
+  text(title, 930, yoffset + 23, 70);
+  
   int ypos = 0;
   for (HashMap.Entry<String, String> entry : playerNames.entrySet())
   {
       String playerid = entry.getKey();
       double[] temp = playerData.get(playerid);
       double dist = temp[2];
+            
+      //table
+      fill(240, 240, 240);
+      rect(900, yoffset*1.32 + ypos, 250, 30);
       
+      //info button
+      textSize(15);
+      fill(140, 140, 140);
+      ellipse(887, yoffset*1.47 + ypos, 18, 18);
+      fill(255, 255, 255);
+      text("i", 886, yoffset*1.53 + ypos, 200);
+
+      //text
       String s = entry.getValue() + ": " + dist + " ft";
-      
+      textSize(12);
       fill(255, 0, 0);
-      text(s, 900, yoffset*3 + ypos, 70);
+      text(s, 940, yoffset*1.5 + ypos, 70);
       
       ypos += 30;
   }
+  
+  drawPlayerScreen();
+}
+
+void drawPlayerScreen(){
+
+   fill(240, 240, 240);
+   rect(900, yoffset*4.5, 250, 250);
+   
+   //header
+   fill(255, 255, 255);
+   textSize(17);
+   rect(900, yoffset*4.5, 250, 30);
+   String playerName = "Dummy";
+   String title = "Player Info: " + playerName;
+   fill(0, 0, 0);
+   text(title, 935, yoffset*4.5 + 20, 70);
+   
+   //info
+   fill(255, 255, 255);
+   rect(900, yoffset*4.5 + 195, 250, 80);
+   
 }
 
 class HScrollbar {
@@ -336,7 +428,8 @@ class HScrollbar {
     ratio = (float)sw / (float)widthtoheight;
     xpos = xp;
     ypos = yp-sheight/2;
-    spos = xpos + swidth/2 - sheight/2;
+    //spos = xpos + swidth/2 - sheight/2;
+    spos = xoffset;
     newspos = spos;
     sposMin = xpos;
     sposMax = xpos + swidth - sheight;
@@ -378,7 +471,8 @@ class HScrollbar {
   }
   
   void display() {
-    noStroke();
+    //noStroke();
+    stroke(0, 0, 0);
     fill(204);  
     rect(xpos, ypos, swidth, sheight);
     if (over || locked) {
