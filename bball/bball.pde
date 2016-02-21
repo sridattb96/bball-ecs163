@@ -12,9 +12,12 @@ Table teamTable;
 /* Useful Variables */
 int team1;
 int team2;
-
 String team1Name;
 String team2Name;
+int gameNum;
+int game;
+int series;
+int round;
 
 int count = 0;
 int fileNum = 1;
@@ -33,11 +36,22 @@ boolean overPrevButton = false;
 boolean gamePaused = false;
 boolean overPauseButton = false;
 
+
+boolean button401 = false;
+boolean button402 = false;
+
+
 void setup() {
   size(1250,750);
   
   hs1 = new HScrollbar(xoffset, yoffset + courtHeight + 12, courtWidth, 20, 1);  
-    
+  
+  /* Initialize */
+  gameNum = 401;
+  game = 1;
+  series = 0;
+  round = 4;
+  
   loadData(fileNum);
   
   team1 = table.getRow(1).getInt("teamid");
@@ -52,6 +66,7 @@ void setup() {
        team2Name = row.getString("name") + " (" + row.getString("abbr") + ")";
      }
   }
+  
 }
 
 void loadData(int fileNum){
@@ -71,7 +86,7 @@ void loadData(int fileNum){
   teamTable.setColumnTitle(1, "name");
   teamTable.setColumnTitle(2, "abbr");
   
-  String fileName = "../data/games/0041400212/" + fileNum + ".csv";
+  String fileName = "../data/games/0041400" + gameNum + "/" + fileNum + ".csv";
   table = loadTable(fileName);
   
   if (table != null){  
@@ -119,7 +134,7 @@ void draw() {
 
 void drawGameSelection(){
   textSize(13);
-  fill(255, 0, 0);
+  fill(0, 0, 0);
   text("1st round", xoffset + 100, yoffset + courtHeight + 50, 70);
   text("2nd round", xoffset + 250, yoffset + courtHeight + 50, 70);
   text("3rd round", xoffset + 400, yoffset + courtHeight + 50, 70);
@@ -136,6 +151,7 @@ void drawGameSelection(){
 
 /* Round 1 */
   int inc = 0;
+  fill(255, 0, 0);
   for (int i = 0; i < 6; i++){
     ellipse(xoffset + 100 + inc, yoffset + courtHeight + 75, 10, 10);
     inc += 20;
@@ -233,12 +249,19 @@ void drawGameSelection(){
   /* Round 4 */
   
   if (mouseX > xoffset + 550 - 5 && mouseX < xoffset + 550 + 5){
-    if ( mouseY > yoffset + courtHeight + 75 && mouseY < yoffset + courtHeight + 75){
-       overNextButton = true; 
+    if ( mouseY > yoffset + courtHeight + 75 && mouseY < yoffset + courtHeight + 80){
+      println("401");
+       button401 = true; 
     }
   }
   
+  if (mouseX > xoffset + 550 - 5 && mouseX < xoffset + 550 + 5){
+   if ( mouseY > yoffset + courtHeight + 95 && mouseY < yoffset + courtHeight + 100){
+           println("402");
 
+      button402 = true; 
+   }
+  }
 }
 
 void drawButtons(){
@@ -294,6 +317,20 @@ void drawButtons(){
        overPauseButton = true;
      }
   }  
+  
+  //Info
+  textSize(20);
+  text("Round", xoffset + courtWidth + 20, yoffset + 290, 70); 
+  text("" + round, xoffset + courtWidth + 20, yoffset + 320, 70); 
+  text("Series", xoffset + courtWidth + 20, yoffset + 350, 70); 
+    text("" + series, xoffset + courtWidth + 20, yoffset + 380, 70); 
+
+  text("Game", xoffset + courtWidth + 20, yoffset + 410, 70); 
+    text("" + game, xoffset + courtWidth + 20, yoffset + 440, 70); 
+
+  
+  
+  
 }
 
 void mousePressed(){
@@ -332,6 +369,28 @@ void mousePressed(){
         
         noLoop();
      }
+   }
+   
+   if (button401) {
+       button401 = false;
+       count = 0;
+       gameNum = 401;
+       game = 1;
+       series = 0;
+       round = 4;
+       println("loaded event 401");
+       loadData(fileNum);
+   }
+   
+   if (button402) {
+       button402 = false;
+       count = 0;
+       gameNum = 402;
+       game = 2;
+       series = 0;
+       round = 4;
+       println("loaded event 401");
+       loadData(fileNum);
    }
 }
 
@@ -474,14 +533,14 @@ void storeInMap(TableRow row){
 }
 
 void drawPlayerInfo(){
-  
+
   String title = "Distance Statistics";
   
   fill(255, 255, 255);
   rect(900, yoffset, 250, 70);
-  
+
   textSize(20);
-  fill(255, 0, 0);
+  fill(0, 0, 0);
   text(title, 930, yoffset + 23, 70);
   
   int ypos = 0;
@@ -505,7 +564,7 @@ void drawPlayerInfo(){
       //text
       String s = entry.getValue() + ": " + dist + " ft";
       textSize(12);
-      fill(255, 0, 0);
+      fill(0, 0, 0);
       text(s, 940, yoffset*1.5 + ypos, 70);
       
       ypos += 30;
@@ -582,7 +641,7 @@ class HScrollbar {
         
       //} 
       spos = xoffset + (courtWidth-18)*count/table.getRowCount();
-      println(spos);
+      //println(spos);
       
     }
   }
