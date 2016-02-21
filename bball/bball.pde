@@ -114,6 +114,131 @@ void draw() {
   }  
   
   drawPlayerInfo();
+  drawGameSelection();
+}
+
+void drawGameSelection(){
+  textSize(13);
+  fill(255, 0, 0);
+  text("1st round", xoffset + 100, yoffset + courtHeight + 50, 70);
+  text("2nd round", xoffset + 250, yoffset + courtHeight + 50, 70);
+  text("3rd round", xoffset + 400, yoffset + courtHeight + 50, 70);
+  text("4th round", xoffset + 550, yoffset + courtHeight + 50, 70);
+  
+  text("0st series", xoffset, yoffset + courtHeight + 80, 70);
+  text("1st series", xoffset, yoffset + courtHeight + 100, 70);
+  text("2nd series", xoffset, yoffset + courtHeight + 120, 70);
+  text("3rd series", xoffset, yoffset + courtHeight + 140, 70);
+  text("4th series", xoffset, yoffset + courtHeight + 160, 70);
+  text("5th series", xoffset, yoffset + courtHeight + 180, 70);
+  text("6th series", xoffset, yoffset + courtHeight + 200, 70);
+  text("7th series", xoffset, yoffset + courtHeight + 220, 70);
+
+/* Round 1 */
+  int inc = 0;
+  for (int i = 0; i < 6; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 75, 10, 10);
+    inc += 20;
+  }
+  
+  inc = 0;
+  for (int i = 0; i < 4; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 95, 10, 10);
+    inc += 20;
+  }
+  
+    inc = 0;
+  for (int i = 0; i < 6; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 115, 10, 10);
+    inc += 20;
+  }
+  
+      inc = 0;
+  for (int i = 0; i < 4; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 135, 10, 10);
+    inc += 20;
+  }
+  
+      inc = 0;
+  for (int i = 0; i < 4; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 155, 10, 10);
+    inc += 20;
+  }
+  
+      inc = 0;
+  for (int i = 0; i < 5; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 175, 10, 10);
+    inc += 20;
+  }
+  
+      inc = 0;
+  for (int i = 0; i < 7; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 195, 10, 10);
+    inc += 20;
+  }
+  
+        inc = 0;
+  for (int i = 0; i < 5; i++){
+    ellipse(xoffset + 100 + inc, yoffset + courtHeight + 215, 10, 10);
+    inc += 20;
+  }
+  
+  /* Round 2 */
+  
+          inc = 0;
+  for (int i = 0; i < 6; i++){
+    ellipse(xoffset + 250 + inc, yoffset + courtHeight + 75, 10, 10);
+    inc += 20;
+  }
+  
+            inc = 0;
+  for (int i = 0; i < 6; i++){
+    ellipse(xoffset + 250 + inc, yoffset + courtHeight + 95, 10, 10);
+    inc += 20;
+  }
+  
+            inc = 0;
+  for (int i = 0; i < 6; i++){
+    ellipse(xoffset + 250 + inc, yoffset + courtHeight + 115, 10, 10);
+    inc += 20;
+  }
+  
+            inc = 0;
+  for (int i = 0; i < 7; i++){
+    ellipse(xoffset + 250 + inc, yoffset + courtHeight + 135, 10, 10);
+    inc += 20;
+  }
+  
+ /* Round 3 */
+ 
+  inc = 0;
+  for (int i = 0; i < 4; i++){
+    ellipse(xoffset + 400 + inc, yoffset + courtHeight + 75, 10, 10);
+    inc += 20;
+  }
+  
+  inc = 0;
+  for (int i = 0; i < 5; i++){
+    ellipse(xoffset + 400 + inc, yoffset + courtHeight + 95, 10, 10);
+    inc += 20;
+  }
+  
+  /* Round 4 */
+  inc = 0;
+  ellipse(xoffset + 550, yoffset + courtHeight + 75, 10, 10);
+  ellipse(xoffset + 550, yoffset + courtHeight + 95, 10, 10);
+
+  /* Click Events */
+  
+  /* Round 4 */
+  
+  if (mouseX > xoffset + 550 - 5 && mouseX < xoffset + 550 + 5){
+    if ( mouseY > yoffset + courtHeight + 75 && mouseY < yoffset + courtHeight + 75){
+       overNextButton = true; 
+    }
+  }
+  
+
 }
 
 void drawButtons(){
@@ -406,7 +531,6 @@ void drawPlayerScreen(){
    //info
    fill(255, 255, 255);
    rect(900, yoffset*4.5 + 195, 250, 80);
-   
 }
 
 class HScrollbar {
