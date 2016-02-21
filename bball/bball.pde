@@ -261,8 +261,6 @@ void populateCourt(){
 
   for (int i = 0; i < 11; i++){
      row = table.getRow(count + i);
-     println(row.getInt("teamid"));
-     noLoop();
      if (row.getInt("teamid") == team1) {
          stroke(0, 0, 0);
          fill(108,112,238);
@@ -453,11 +451,15 @@ class HScrollbar {
       newspos = constrain(mouseX, sposMin, sposMax);
 
     }
-    if (abs(newspos - spos) > 1) {
-      spos = spos + (newspos-spos)/loose;
-      if (spos > 0) {
+    //if (abs(newspos - spos) > 1) {
+    if (true){  
+      //spos = spos + (newspos-spos)/loose;
+      //if (spos > 0) {
         
-      }
+      //} 
+      spos = xoffset + (courtWidth-18)*count/table.getRowCount();
+      println(spos);
+      
     }
   }
   
